@@ -1,0 +1,44 @@
+environment: nodejs
+framework: nestjs
+database provider: mysql
+framework for database management: prisma
+it will be running using docker
+
+application modules:
+auth - jwt token based
+roles: user, content manager, administrator, super administrator
+user: casual user
+content manager: can add resources, agendas, news and manage them if they are created by him
+administrator: can add resources, agendas, news and manage them, can patch all of them but cannot delete
+super administrator: everything
+
+endpoints (dtos are specified in code clearly):
+/auth
+	post /sign-up - register using username, password and other info like interests
+	post /sign-in - signing in with username and password
+
+/user (all need jwt token specified in header in order to access them)
+	get /getMe - get logged user
+	get /getAll (super admin role required) - get all users
+	patch /setSelfInfo (content manager role required) - edit self informations
+	patch /{id}/setRole (super admin role required) - set role of user | maybe not required and /{id}/patch will be enough
+	patch /{id}/patch (super admin role required) - patch user
+	delete /{id}/delete (super admin role required) - delete user
+	
+/resource (all need jwt token specified in header in order to access them)
+	get /getAll - get all resources
+	post /create (content manager role required) - create a resource
+	delete /{id}/delete (super admin role required) - delete a resource
+	patch /{id}/patch (content manager role required for editing self created, super admin for all) - patch a resource
+
+/news (all need jwt token specified in header in order to access them)
+	get /getAll - get all news
+	post /create (content manager role required) - create a news
+	delete /{id}/delete (super admin role required) - delete a news
+	patch /{id}/patch (content manager role required for editing self created, super admin for all) - patch a news
+
+/agenda (all need jwt token specified in header in order to access them)
+	get /getAll - get all agendas
+	post /create (content manager role required) - create an agenda
+	delete /{id}/delete (content manager role required for editing self created, super admin for all) - delete an agenda
+	patch /{id}/patch (content manager role required for editing self created, super admin for all) - patch an agenda
