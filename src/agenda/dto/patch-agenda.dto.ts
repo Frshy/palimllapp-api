@@ -8,6 +8,9 @@ export class PatchAgendaDto {
   @IsString()
   description: string;
 
+  @IsString()
+  address: string;
+
   @IsDateString()
   date: string;
 

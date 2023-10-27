@@ -10,10 +10,16 @@ import { PatchResourceDto } from './dto/patch-resource.dto';
 import { ResourceIdDto } from './dto/resource-id.dto';
 
 @Controller('resource')
-@UseGuards(JwtGuard)
 export class ResourceController {
   constructor(private readonly resourceService: ResourceService) { }
 
+  @Get('get-active')
+  async getActive() {
+    return this.resourceService.getActive();
+  } 
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.CONTENT_MANAGER, Role.ADMINISTRATOR, Role.SUPER_ADMINISTRATOR)
   @Get('get-all')
   async getAll() {
     return this.resourceService.getAll();
@@ -21,6 +27,7 @@ export class ResourceController {
 
   @Roles(Role.CONTENT_MANAGER, Role.ADMINISTRATOR, Role.SUPER_ADMINISTRATOR)
   @UseGuards(RolesGuard)
+@UseGuards(JwtGuard)
   @Post('create')
   async createResource(@GetUser() user: User, @Body() dto: CreateResourceDto) {
     return this.resourceService.createResource(user, dto);
@@ -28,6 +35,7 @@ export class ResourceController {
 
   @Roles(Role.CONTENT_MANAGER, Role.ADMINISTRATOR, Role.SUPER_ADMINISTRATOR)
   @UseGuards(RolesGuard)
+@UseGuards(JwtGuard)
   @Patch(':id/patch')
   async patchResource(@GetUser() user: User, @Body() dto: PatchResourceDto, @Param() {id}: ResourceIdDto) {
     return this.resourceService.patchResource(user, dto, id);
@@ -35,6 +43,7 @@ export class ResourceController {
 
   @Roles(Role.SUPER_ADMINISTRATOR)
   @UseGuards(RolesGuard)
+@UseGuards(JwtGuard)
   @Delete(':id/delete')
   async deleteResource(@Param() {id}: ResourceIdDto) {
     return this.resourceService.deleteResource(id);

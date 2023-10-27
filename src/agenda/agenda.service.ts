@@ -8,6 +8,28 @@ import { CreateAgendaDto } from './dto/create-agenda.dto';
 export class AgendaService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getActive() {
+    const currentDate = new Date();
+
+    const agendas = await this.prisma.agenda.findMany({
+      include: {
+        createdByUser: {
+          select: {
+            username: true,
+          }
+        }
+      },
+      where: {
+        active: true,
+        date: {
+          gt: currentDate
+        }
+      }
+    });
+
+    return agendas;
+  }
+
   async getAll() {
     const agendas = await this.prisma.agenda.findMany({
       include: {
@@ -16,11 +38,12 @@ export class AgendaService {
             username: true,
           }
         }
-      }
+      },
     });
 
     return agendas;
   }
+
 
   async createAgenda(executingUser: User, dto: CreateAgendaDto) {
     const date = new Date(dto.date)

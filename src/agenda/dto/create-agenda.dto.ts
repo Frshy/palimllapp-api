@@ -10,6 +10,10 @@ export class CreateAgendaDto {
   @IsNotEmpty()
   description: string;
 
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
   @IsDateString()
   @IsNotEmpty()
   date: string;

@@ -10,17 +10,25 @@ import { PatchAgendaDto } from './dto/patch-agenda.dto';
 import { AgendaIdDto } from './dto/agenda-id.dto';
 
 @Controller('agenda')
-@UseGuards(JwtGuard)
 export class AgendaController {
   constructor(private readonly agendaService: AgendaService) {}
 
+  @Get('get-active')
+  async getActive() {
+    return this.agendaService.getActive();
+  } 
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.CONTENT_MANAGER, Role.ADMINISTRATOR, Role.SUPER_ADMINISTRATOR)
   @Get('get-all')
   async getAll() {
     return this.agendaService.getAll();
   } 
 
+
   @Roles(Role.CONTENT_MANAGER, Role.ADMINISTRATOR, Role.SUPER_ADMINISTRATOR)
   @UseGuards(RolesGuard)
+@UseGuards(JwtGuard)
   @Post('create')
   async createAgenda(@GetUser() user: User, @Body() dto: CreateAgendaDto) {
     return this.agendaService.createAgenda(user, dto);
@@ -28,6 +36,7 @@ export class AgendaController {
 
   @Roles(Role.CONTENT_MANAGER, Role.ADMINISTRATOR, Role.SUPER_ADMINISTRATOR)
   @UseGuards(RolesGuard)
+@UseGuards(JwtGuard)
   @Patch(':id/patch')
   async patchAgenda(@GetUser() user: User, @Body() dto: PatchAgendaDto, @Param() {id}: AgendaIdDto) {
     return this.agendaService.patchAgenda(user, dto, id);
@@ -35,6 +44,7 @@ export class AgendaController {
 
   @Roles(Role.SUPER_ADMINISTRATOR)
   @UseGuards(RolesGuard)
+@UseGuards(JwtGuard)
   @Delete(':id/delete')
   async deleteAgenda(@Param() {id}: AgendaIdDto) {
     return this.agendaService.deleteAgenda(id);

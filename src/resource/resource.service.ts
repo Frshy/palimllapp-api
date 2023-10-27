@@ -17,6 +17,23 @@ export class ResourceService {
             username: true,
           }
         }
+      },
+    });
+
+    return resources;
+  }
+
+  async getActive() {
+    const resources = await this.prisma.resource.findMany({
+      include: {
+        createdByUser: {
+          select: {
+            username: true,
+          }
+        }
+      },
+      where: {
+        isActive: true,
       }
     });
 

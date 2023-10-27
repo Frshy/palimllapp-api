@@ -8,6 +8,23 @@ import { PatchNewsDto } from './dto/patch-news.dto';
 export class NewsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getActive() {
+    const news = await this.prisma.news.findMany({
+      include: {
+        createdByUser: {
+          select: {
+            username: true,
+          }
+        }
+      },
+      where: {
+        active: true,
+      }
+    });
+
+    return news;
+  }
+
   async getAll() {
     const news = await this.prisma.news.findMany({
       include: {
@@ -16,11 +33,12 @@ export class NewsService {
             username: true,
           }
         }
-      }
+      },
     });
 
     return news;
   }
+
 
   async createNews(executingUser: User, dto: CreateNewsDto) {
     const news = await this.prisma.news.create({
